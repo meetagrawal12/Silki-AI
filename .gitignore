@@ -1,0 +1,29 @@
+# --- Environment Variables & Secrets ---
+.env
+*.env
+.env.*
+!.env.example
+
+# --- Databases ---
+*.db
+*.db-journal
+silki.db
+
+# --- Frontend / Node ---
+node_modules/
+dist/
+build/
+.output/
+
+# --- Backend / Python ---
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- IDE & OS ---
+.vscode/
+.idea/
+.DS_Store
