@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -162,10 +162,11 @@
           <svg viewBox="0 0 100 100" width="56" height="56"><path d="M10,55 C25,35 35,75 50,50 C65,25 75,65 90,45" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
         </div>
         <h2>Where should the thread start?</h2>
+        <p class="welcome-sub">Chat, generate images, search the web, or drop in a file — all from one box below.</p>
         <div class="suggestion-chips">
           <button class="chip" data-prompt="Explain quantum computing simply">Explain quantum computing</button>
           <button class="chip" data-prompt="Write a Python function to sort a list">Write a sorting function</button>
-          <button class="chip" data-prompt="Give me 5 startup ideas for 2026">Startup ideas for 2026</button>
+          <button class="chip" data-prompt="Generate an image of a fox in autumn woods">Generate an image</button>
           <button class="chip" data-prompt="Write a short poem about the ocean">A short poem, the ocean</button>
         </div>
       </div>
@@ -176,15 +177,11 @@
       <span id="stream-status-text">Weaving a reply…</span>
     </div>
 
-    <div class="mode-bar">
-      <button class="mode-tab active" data-mode="chat">Chat</button>
-      <button class="mode-tab" data-mode="image">Image</button>
-    </div>
-
     <div class="input-container">
       <!-- File Preview Attachment Tray -->
       <div id="file-preview-container" class="file-preview-container hidden">
         <div class="file-preview-chip">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           <span id="file-preview-name">file.pdf</span>
           <button type="button" id="remove-file-btn" aria-label="Remove attachment">&times;</button>
         </div>
@@ -193,7 +190,7 @@
       <form id="chat-form" class="input-box">
         <!-- Hidden file input -->
         <input type="file" id="file-input" accept="image/*,.pdf,.txt" hidden />
-        
+
         <!-- Attach button -->
         <button type="button" class="tool-btn" id="attach-btn" title="Attach image or document" aria-label="Attach file">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -203,9 +200,9 @@
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
         </button>
 
-        <textarea id="chat-input" placeholder="Message Silki AI…" rows="1" autocomplete="off"></textarea>
+        <textarea id="chat-input" placeholder="Message Silki AI, or ask it to generate an image…" rows="1" autocomplete="off"></textarea>
 
-        <button type="button" class="tool-btn enhance-btn hidden" id="enhance-btn" title="Enhance prompt">
+        <button type="button" class="tool-btn enhance-btn" id="enhance-btn" title="Enhance prompt">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
         </button>
 
@@ -262,8 +259,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="config.js"></script>
-<script src="api.js"></script>
-<script src="app.js"></script>
+<script type="module" src="app.js?v=3"></script>
 
 </body>
 </html>

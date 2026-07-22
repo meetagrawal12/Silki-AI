@@ -1,4 +1,4 @@
-"""Routes a chat request to the correct provider based on `model` field."""
+"""Routes a chat request to the correct provider based on `provider` field."""
 from app.services.gemini_service import gemini_chat
 from app.services.openrouter_service import openrouter_chat
 from app.services.llm_service import groq_chat

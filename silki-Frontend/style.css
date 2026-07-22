@@ -85,7 +85,7 @@ button, input, textarea { font-family: inherit; color: inherit; }
 .thread-bg { position: absolute; inset: 0; z-index: 0; opacity: .5; pointer-events: none; }
 .thread-bg svg { width: 100%; height: 100%; }
 #thread-path {
-  fill: none; stroke: url(#none); stroke: var(--thread); stroke-width: 1.4;
+  fill: none; stroke: var(--thread); stroke-width: 1.4;
   opacity: .35; stroke-dasharray: 14 10; animation: threadFlow 14s linear infinite;
 }
 @keyframes threadFlow { to { stroke-dashoffset: -480; } }
@@ -189,34 +189,67 @@ button, input, textarea { font-family: inherit; color: inherit; }
 .topbar-btn, .theme-toggle { background: none; border: none; color: var(--text-dim); padding: 8px; border-radius: 8px; cursor: pointer; display: flex; }
 .topbar-btn:hover, .theme-toggle:hover { background: var(--surface-2); color: var(--text); }
 
+/* ---------- messages ---------- */
 .messages-container { flex: 1; overflow-y: auto; padding: 22px 0; scrollbar-width: thin; }
-.welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; text-align: center; }
+
+.welcome-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; text-align: center; padding: 0 24px; }
 .welcome-mark { color: var(--thread); }
 .welcome-screen h2 { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -.3px; }
-.suggestion-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 560px; }
+.welcome-sub { font-size: 14px; color: var(--text-dim); max-width: 420px; margin-top: -6px; }
+.suggestion-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 560px; margin-top: 6px; }
 .chip { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 15px; border-radius: var(--radius-full); font-size: 13px; cursor: pointer; }
 .chip:hover { border-color: var(--thread); }
 
-.message { max-width: 760px; margin: 0 auto; padding: 14px 24px; width: 100%; display: flex; gap: 12px; }
-.message.user { flex-direction: row-reverse; }
+/* One single bubble system. appendMessageDOM() in app.js sets
+   class="message user" or class="message bot" — every rule below
+   targets exactly that, so there's no second conflicting ruleset
+   fighting over sizing (that mismatch was what caused full-width bars). */
+.message {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 6px 24px;
+  width: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+.message.user { justify-content: flex-end; }
+
 .msg-avatar { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .message.bot .msg-avatar { background: var(--surface-2); color: var(--thread); }
 .message.user .msg-avatar { display: none; }
-.msg-body { flex: 1; min-width: 0; }
-.message.user .msg-body { max-width: 74%; background: linear-gradient(135deg, var(--thread), var(--thread-2)); color: #1a1508; padding: 12px 16px; border-radius: 16px 16px 4px 16px; flex: none; font-weight: 500; }
-.msg-content { font-size: 15px; line-height: 1.65; }
+
+.msg-body { min-width: 0; }
+.message.bot .msg-body { flex: 1; }
+.message.user .msg-body {
+  max-width: 74%;
+  background: linear-gradient(135deg, var(--thread), var(--thread-2));
+  color: #1a1508;
+  padding: 12px 16px;
+  border-radius: 16px 16px 4px 16px;
+  font-weight: 500;
+}
+
+.msg-content { font-size: 15px; line-height: 1.65; word-wrap: break-word; }
 .msg-content p { margin-bottom: 10px; } .msg-content p:last-child { margin-bottom: 0; }
 .msg-content pre { background: #0e0c16; color: #f0ece0; padding: 14px 16px; border-radius: var(--radius); overflow-x: auto; margin: 10px 0; font-family: var(--font-mono); font-size: 13px; border: 1px solid var(--border); }
 [data-theme="light"] .msg-content pre { background: #1e1b2b; }
 .msg-content code { font-family: var(--font-mono); background: var(--accent-soft); padding: 2px 6px; border-radius: 5px; font-size: 13px; }
+.message.user .msg-content code { background: rgba(0,0,0,.12); }
 .msg-content pre code { background: none; padding: 0; }
 .msg-content ul, .msg-content ol { margin: 8px 0 8px 20px; }
 .msg-content a { color: var(--thread); }
+.message.user .msg-content a { color: #1a1508; text-decoration: underline; }
+
 .msg-actions { display: none; gap: 6px; margin-top: 8px; }
 .message.bot:hover .msg-actions { display: flex; }
 .msg-action-btn { background: none; border: 1px solid var(--border); color: var(--text-dim); padding: 4px 10px; border-radius: 7px; font-size: 11.5px; cursor: pointer; }
 .msg-action-btn:hover { color: var(--text); border-color: var(--thread); }
-.msg-img { max-width: 100%; border-radius: var(--radius); margin-top: 8px; border: 1px solid var(--border); }
+
+.msg-img { max-width: 420px; width: 100%; border-radius: var(--radius); border: 1px solid var(--border); display: block; }
+.sources { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+.sources a { color: var(--thread); text-decoration: underline; margin-right: 8px; }
+
 .streaming-cursor { display: inline-block; width: 2px; height: 15px; background: var(--thread); margin-left: 2px; vertical-align: middle; animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
@@ -230,135 +263,37 @@ button, input, textarea { font-family: inherit; color: inherit; }
 }
 @keyframes threadSlide { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-.mode-bar { display: flex; gap: 6px; padding: 8px 24px 0; max-width: 760px; margin: 0 auto; width: 100%; flex-shrink: 0; }
-.mode-tab { background: none; border: 1px solid transparent; color: var(--text-dim); font-size: 13px; padding: 6px 14px; border-radius: var(--radius-full); cursor: pointer; }
-.mode-tab.active { color: var(--text); border-color: var(--border); background: var(--surface); }
-
 /* ============================================================
-   MINIMAL CHAT COMPONENT (THEMED)
+   UNIFIED INPUT (chat + image + file, one box, no mode tabs)
    ============================================================ */
-#chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-#messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  scrollbar-width: thin;
-}
-
-.msg {
-  margin-bottom: 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  max-width: 75%;
-  line-height: 1.5;
-  font-size: 14.5px;
-}
-
-.msg.user {
-  background: linear-gradient(135deg, var(--thread), var(--thread-2));
-  color: #1a1508;
-  font-weight: 500;
-  margin-left: auto;
-  border-bottom-right-radius: 4px;
-}
-
-.msg.ai {
-  background: var(--surface-2);
-  color: var(--text);
-  border: 1px solid var(--border);
-  margin-right: auto;
-  border-bottom-left-radius: 4px;
-}
-
-.msg img {
-  max-width: 100%;
-  border-radius: 8px;
-  margin-top: 6px;
-  border: 1px solid var(--border);
-}
-
-.msg audio {
-  width: 100%;
-  margin-top: 6px;
-}
-
-.msg .sources {
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-top: 6px;
-}
-
-.msg .sources a {
-  color: var(--thread);
-  text-decoration: underline;
-}
-
-#chat-form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-}
-
 .input-container { max-width: 760px; margin: 0 auto; width: 100%; padding: 10px 24px 20px; flex-shrink: 0; }
-.input-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; align-items: flex-end; padding: 9px 10px; gap: 6px; box-shadow: var(--shadow); }
+
+.file-preview-container { margin-bottom: 8px; }
+.file-preview-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); padding: 7px 10px 7px 12px; border-radius: var(--radius-full);
+  font-size: 12.5px;
+}
+.file-preview-chip svg { color: var(--thread); flex-shrink: 0; }
+#remove-file-btn { background: none; border: none; color: var(--text-dim); font-size: 16px; line-height: 1; cursor: pointer; padding: 0 2px; }
+#remove-file-btn:hover { color: var(--danger); }
+
+.input-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; align-items: flex-end; padding: 9px 10px; gap: 4px; box-shadow: var(--shadow); }
 .input-box:focus-within { border-color: var(--thread); }
 
-/* Combined Chat Input */
 #chat-input {
   flex: 1;
   background: transparent;
-  border: 1px solid var(--border);
+  border: none;
   color: var(--text);
-  padding: 10px 14px;
-  border-radius: var(--radius-lg);
+  padding: 8px 6px;
   font-size: 14.5px;
   outline: none;
   font-family: var(--font-body);
   line-height: 1.5;
-  transition: border-color .15s ease;
-}
-
-#chat-input:focus {
-  border-color: var(--thread);
-}
-
-.input-box #chat-input {
-  border: none;
-  padding: 6px 4px;
   resize: none;
   max-height: 180px;
-}
-
-#attach-btn, #send-btn {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 6px 10px;
-  color: var(--text-dim);
-  transition: color .15s ease;
-}
-
-#attach-btn:hover {
-  color: var(--text);
-}
-
-#send-btn {
-  color: var(--thread);
-}
-
-#send-btn:hover {
-  color: var(--thread-2);
 }
 
 .tool-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 7px; border-radius: 9px; display: flex; flex-shrink: 0; }
@@ -405,6 +340,7 @@ button, input, textarea { font-family: inherit; color: inherit; }
   .sidebar.open { transform: translateX(0); }
   .mobile-only { display: flex; }
   .hero-title { font-size: 34px; }
+  .message.user .msg-body { max-width: 86%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -14,10 +14,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
-    GEMINI_API_KEY: str
-    TAVILY_API_KEY: str
-    OPENROUTER_API_KEY: str = ""  # optional
-
 
     # --- App ---
     app_name: str = "Silki AI"
@@ -25,14 +21,11 @@ class Settings(BaseSettings):
     debug: bool = True
 
     # --- Security ---
-    # Generate with: python -c "import secrets; print(secrets.token_hex(32))"
     secret_key: str = "CHANGE_ME_IN_PRODUCTION"
     access_token_expire_minutes: int = 60 * 24  # 1 day
     refresh_token_expire_days: int = 30
     jwt_algorithm: str = "HS256"
 
-    # --- CORS ---
-    # Comma-separated list in .env, e.g. "https://silki.app,https://www.silki.app"
     # --- CORS ---
     cors_origins: str = (
         "http://localhost:5173,http://127.0.0.1:5173,"
@@ -47,8 +40,6 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
     # --- Database ---
-    # SQLite by default (zero setup, free). Swap to a Postgres URL later
-    # without changing any application code — SQLAlchemy abstracts it.
     database_url: str = "sqlite+aiosqlite:///./silki.db"
 
     # --- LLM providers (Groq — free tier) ---
@@ -66,13 +57,18 @@ class Settings(BaseSettings):
     hf_image_model: str = "black-forest-labs/FLUX.1-schnell"
     hf_asr_model: str = "openai/whisper-large-v3"
 
+    # --- New providers (optional — features degrade gracefully if unset) ---
+    gemini_api_key: str = ""
+    tavily_api_key: str = ""
+    openrouter_api_key: str = ""
+
     # --- Rate limiting ---
     rate_limit_chat: str = "20/minute"
     rate_limit_image: str = "10/minute"
     rate_limit_auth: str = "10/minute"
 
     # --- Session limits ---
-    max_history_messages: int = 40  # 20 exchanges kept per session
+    max_history_messages: int = 40
 
 
 @lru_cache

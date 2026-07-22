@@ -1,10 +1,10 @@
 """
 Additional AI providers and tools for Silki AI:
-multi-model chat, Gemini, web search, vision, RAG, TTS.
+multi-model chat, smart auto-routing, Gemini, web search, vision, RAG, TTS.
 """
 import logging
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
@@ -12,6 +12,8 @@ from app.middleware.rate_limit import limiter
 from app.services.gemini_service import GeminiError, gemini_chat, gemini_vision
 from app.services.search_service import SearchError, web_search
 from app.services.model_router import route_chat
+from app.services.intent_router import detect_intent
+from app.services.image_service import ImageService
 from app.services.rag_service import (
     chunk_text,
     embed_chunks,
@@ -20,7 +22,7 @@ from app.services.rag_service import (
 )
 from app.services.doc_store import get_document, save_document
 from app.services.tts_service import text_to_speech
-from app.services.llm_service import groq_chat  # ⚠️ confirm this matches your real function
+from app.services.llm_service import groq_chat
 
 log = logging.getLogger("silki.ai_router")
 router = APIRouter(prefix="/ai", tags=["ai"])
@@ -54,7 +56,30 @@ class TTSRequest(BaseModel):
     voice: str = "en-US-AriaNeural"
 
 
-# ---------- Multi-model chat ----------
+# ---------- Smart chat (auto-detects image / search / plain chat) ----------
+
+@router.post("/smart-chat")
+@limiter.limit("15/minute")
+async def smart_chat(request: Request, body: ModelChatRequest):
+    intent = detect_intent(body.prompt)
+    try:
+        if intent == "image":
+            image_b64 = await ImageService.generate(body.prompt)
+            return {"type": "image", "url": f"data:image/png;base64,{image_b64}"}
+
+        if intent == "search":
+            result = await web_search(body.prompt)
+            return {"type": "search", "answer": result["answer"], "sources": result["sources"]}
+
+        result = await route_chat(body.prompt, body.provider)
+        return {"type": "text", "response": result}
+
+    except Exception as e:
+        log.error("Smart chat failed (intent=%s): %s", intent, e)
+        raise HTTPException(status_code=502, detail=str(e))
+
+
+# ---------- Multi-model chat (explicit provider selection) ----------
 
 @router.post("/chat")
 @limiter.limit("15/minute")
